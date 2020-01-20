@@ -73,11 +73,11 @@ namespace ATM
         {
             string accountLine = _commandQueue.Dequeue();
             string balanceLine = _commandQueue.Dequeue();
+
             if (new Regex(_accountPattern).IsMatch(accountLine) && new Regex(_balanceOverdraftPattern).IsMatch(balanceLine))
             {
                 var acc = accountLine.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
                 var bal = balanceLine.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(x => int.Parse(x)).ToList();
-
                 _atm.BeginSession(acc[1], acc[2], bal[0], bal[1]);
             }
             else
@@ -87,12 +87,13 @@ namespace ATM
         }
         private void _executeSessionCommands()
         {
-            // add new line after first output
+            // add new line to output before second command
             if(_output.Length > 0)
             {
                 _output.AppendLine();
             }
 
+            // balance, withdrawal, or throw error
             var command = _commandQueue.Dequeue();
             if (command == "B")
             {
@@ -100,6 +101,7 @@ namespace ATM
             }
             else if (new Regex(_withdrawalPattern).IsMatch(command))
             {
+                // command is "W [amount]"
                 int amount = int.Parse(command.Split(' ')[1]);
                 _output.Append(_atm.WithdrawCash(amount));
             } 
@@ -107,10 +109,11 @@ namespace ATM
             {
                 throw new InvalidOperationException("Invalid Input. Expecte B for balance request or W [withdrawalAmount] for withdrawal");
             }
-
         }
+
         private void _endSession()
         {
+            // either empty line or no command, both are acceptable session ends
             _commandQueue.TryDequeue(out _);
             _atm.EndSession();
         }
