@@ -4,7 +4,7 @@ using System.Collections;
 
 namespace ATMTests
 {
-    public class ATMTests
+    public class AtmTests
     {
         private static IEnumerable ValidWithdrawals
         {

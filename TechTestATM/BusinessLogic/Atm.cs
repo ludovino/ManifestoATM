@@ -18,6 +18,11 @@ namespace ATM
         {
             _cash = cash;
         }
+
+        public Atm()
+        {
+        }
+
         public void BeginSession(int accountPin, int pinEntered, int balance, int overdraft)
         {
 
